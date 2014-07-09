@@ -1,0 +1,4 @@
+MIRRORSITE=http://repo.{{ domain }}/{{ item.flavor }}
+DISTRIBUTION={{ item.distribution }}
+COMPONENTS="{{ item.components }}"
+BASETGZ=/var/cache/pbuilder/base-{{ item.distribution }}.tgz

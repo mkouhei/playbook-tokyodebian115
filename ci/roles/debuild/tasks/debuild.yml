@@ -1,0 +1,88 @@
+---
+# roles/debuild/tasks/debuild.yml
+
+- name: be sure packages installed
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - devscripts
+    - cowbuilder
+    - git-buildpackage
+    - piuparts
+    - dput
+    - debhelper
+    - python-all
+    - python3-all
+    - python-setuptools
+    - python3-setuptools
+    - python-gnupg
+    - python-debian
+    - python-pexpect
+    - ruby-dev
+    - gem2deb
+    - ruby-minitest
+  tags:
+    - packages
+    - debuild
+
+- name: be sure packages installed for Trusty
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - python3-pexpect
+  when: ansible_distribution == 'ubuntu' and ansible_distribution_release == 'trusty'
+  tags:
+    - packages
+    - debuild
+
+- name : be sure configuration directories are prepared
+  file: path=/usr/share/tomcat7/{{ item }} owner=tomcat7 group=tomcat7 mode=0700 state=directory
+  with_items:
+    - .gnupg
+    - .ssh
+  tags:
+    - configuration
+    - debuild
+
+- name: be sure configuration files are prepared
+  copy: src={{ item }} dest=/usr/share/tomcat7/{{ item }} owner=tomcat7 group=tomcat7 mode=0644
+  with_items:
+    - .gbp.conf
+  tags:
+    - configuration
+    - debuild
+
+#- name: be sure gnupg is prepared
+#  copy: src={{ item }} dest=/usr/share/tomcat7/.gnupg/{{ item }} owner=tomcat7 group=tomcat7 mode=0600
+#  with_items:
+#    - gpg.conf
+#    - pubring.gpg
+#    - secring.gpg
+#    - trustdb.gpg
+#  tags:
+#    - configuration
+#    - gnupg
+#    - debuild
+# 
+#- name: be sure ssh private key is prepared
+#  copy: src={{ item }} dest=/usr/share/tomcat7/.ssh/{{ item }} owner=tomcat7 group=tomcat7 mode=0600
+#  with_items:
+#    - id_rsa
+#  tags:
+#    - configuration
+#    - dput
+#    - debuild
+
+- name: be sure dput.cf configuration is prepared
+  template: src={{ item }}.j2 dest=/etc/{{ item }} owner=root group=root mode=0644
+  with_items:
+    - dput.cf
+  tags:
+    - configuration
+    - dput
+    - debuild
+
+- name: be sure Jenkins user is enable to use sudo without password
+  copy: src=tomcat7 dest=/etc/sudoers.d/tomcat7 owner=root group=root mode=0600
+  tags:
+    - debuild
+    - sudo
+

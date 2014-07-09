@@ -1,0 +1,9 @@
+---
+- hosts: ciservers
+  sudo: yes
+  roles:
+    - common
+    - apptier
+    - ci
+    - webtier
+    - debuild

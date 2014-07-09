@@ -1,0 +1,4 @@
+---
+# file: roles/ci/tasks/main.yml
+
+- include: jenkins.yml

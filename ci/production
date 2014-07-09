@@ -1,0 +1,8 @@
+[production:children]
+ciservers
+
+[ciservers]
+ci.example.org
+
+[local]
+localhost ansible_connection=local

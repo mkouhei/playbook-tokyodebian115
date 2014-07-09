@@ -1,0 +1,5 @@
+tomcat7 ALL= NOPASSWD: /usr/sbin/pbuilder,\
+        /usr/sbin/piuparts,\
+        /usr/sbin/cowbuilder,\
+        /usr/bin/git-buildpackage,\
+	/bin/chown

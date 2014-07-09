@@ -1,0 +1,18 @@
+---
+# file: roles/apptier/tasks/tomcat.yml
+
+- name: be sure tomcat is installed
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - default-jre-headless
+    - tomcat7
+    - tomcat7-common
+  tags:
+    - packages
+    - tomcat7
+
+- name: be sure tomca is configured
+  template: src=tomcat7.j2 dest=/etc/default/tomcat7
+  notify: restart tomcat
+  tags:
+    - tomcat7

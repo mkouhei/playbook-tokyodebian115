@@ -1,0 +1,28 @@
+---
+# file: roles/ci/tasks/jenkins.yml
+
+- name: be sure jenkins data directory is prepared
+  file: path=/var/lib/jenkins owner=tomcat7 group=tomcat7 mode=0700 state=directory
+  tags:
+    - jenkins
+
+- name: be sure symlink of jenkins directory to tomcat7 home directory is prepared
+  file: src=/var/lib/jenkins dest=/usr/share/tomcat7/.jenkins state=link
+  tags:
+    - jenkins
+
+- name: be sure jenkins.war is prepared
+  get_url: url="http://mirrors.jenkins-ci.org/war/latest/jenkins.war" dest=/var/lib/tomcat7/webapps/
+  notify:
+    - restart tomcat7
+  tags:
+    - jenkins
+    - tomcat7
+
+- name: be sure jenkins security configured
+  template: src=config.xml.j2 dest=/var/lib/jenkins/config.xml owner=tomcat7 group=tomcat7 mode=0644
+  notify:
+    - restart tomcat7
+  tags:
+    - jenkins
+    - tomcat7

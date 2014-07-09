@@ -1,0 +1,7 @@
+---
+tomcat_user: tomcatadm
+ldap_hostname: ldap
+user_search_base: ou=People,dc=example,dc=org
+group_search_base: ou=Groups,dc=example,dc=org
+reprepro_login: repoadm
+reprepro_hostname: repo

@@ -1,0 +1,15 @@
+---
+# file: roles/webtier/tasks/nginx.yml
+
+- name: be sure nginx is installed
+  apt: pkg=nginx state=latest
+  tags:
+    - packages
+    - nginx
+
+- name: be sure nginx is configured
+  template: src=nginx.default.j2 dest=/etc/nginx/sites-available/default
+  notify:
+    - reload nginx
+  tags:
+    - nginx

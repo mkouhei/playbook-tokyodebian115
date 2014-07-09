@@ -1,0 +1,6 @@
+---
+# file: roles/webtier/handlers/main.yml
+
+- name: reload nginx
+  service: name=nginx state=reloaded
+  tags: nginx

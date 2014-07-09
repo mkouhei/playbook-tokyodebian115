@@ -1,0 +1,62 @@
+---
+# file: roles/debuild/task/pbuilder.yml
+
+- name: be sure pbuilderrc file is prepared
+  copy: src=.pbuilderrc dest=/root/.pbuilderrc
+  tags:
+    - pbuilder
+
+- name: be sure pbuilderrc file is prepared for Ubuntu
+  template: src=.pbuilderrc.j2 dest=/tmp/.pbuilderrc-{{ item.distribution }}
+  with_items:
+    - { distribution: "precise", flavor: "ubuntu", components: "main universe" }
+    - { distribution: "trusty", flavor: "ubuntu", components: "main universe" }
+  when: ansible_distribution == "Ubuntu"
+  tags:
+    - pbuilder
+
+- name: be sure pbuilderrc file is prepared for Debian
+  template: src=.pbuilderrc.j2 dest=/tmp/.pbuilderrc-{{ item.distribution }}
+  with_items:
+    - { distribution: "wheezy", flavor: "debian", components: "main" }
+  when: ansible_distribution == "Debian"
+  tags:
+    - pbuilder
+
+- name: be sure prepared pbuilder base images for Ubuntu
+  shell: |
+    test -s /var/cache/pbuilder/base-{{ item.distribution }}.tgz || pbuilder --create --basetgz /var/cache/pbuilder/base-{{ item.distribution }}.tgz --configfile /tmp/.pbuilderrc-{{ item.distribution }}
+  with_items:
+    - { distribution: "precise", flavor: "ubuntu", components: "main universe" }
+    - { distribution: "trusty", flavor: "ubuntu", components: "main universe" }
+  when: ansible_distribution == "Ubuntu"
+  tags:
+    - pbuilder
+
+- name: be sure prepared pbuilder base images for Debian
+  shell: |
+    test -s /var/cache/puilder/base-{{ item.distribution }}.tgz || pbuilder --create --basetgz /var/cache/pbuilder/base-{{ item.distribution }}.tgz --configfile /tmp/.pbuilderrc-{{ item.distribution }}
+  with_items:
+    - { distribution: "wheezy", flavor: "debian", components: "main" }
+  when: ansible_distribution == "Debian"
+  tags:
+    - pbuilder
+
+- name: be sure prepared cowbuilder base tree for Ubuntu
+  shell: |
+    test -d /var/cache/pbuilder/base-{{ item.distribution }}.cow || MIRRORSITE=http://repo.{{ domain }}/{{ item.flavor }} DISTRIBUTION={{ item.distribution }} COMPONENTS="{{ item.components }}" cowbuilder --create --basepath /var/cache/pbuilder/base-{{ item.distribution }}.cow --distribution {{ item.distribution }} --configfile /tmp/.pbuilderrc-{{ item.distribution }}
+  with_items:
+    - { distribution: "precise", flavor: "ubuntu", components: "main universe" }
+    - { distribution: "trusty", flavor: "ubuntu", components: "main universe" }
+  when: ansible_distribution == "Ubuntu"
+  tags:
+    - pbuilder
+
+- name: be sure prepared cowbuilder base tree for Debian
+  shell: |
+    test -d /var/cache/pbuilder/base-{{ item.distribution }}.cow || MIRRORSITE=http://repo.{{ domain }}/{{ item.flavor }} DISTRIBUTION={{ item.distribution }} COMPONENTS="{{ item.components }}" cowbuilder --create --basepath /var/cache/pbuilder/base-{{ item.distribution }}.cow --distribution {{ item.distribution }} --configfile /tmp/.pbuilderrc-{{ item.distribution }}
+  with_items:
+    - { distribution: "wheezy", flavor: "debian", components: "main" }
+  when: ansible_distribution == "Debian"
+  tags:
+    - pbuilder
