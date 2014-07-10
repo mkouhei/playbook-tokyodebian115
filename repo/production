@@ -1,0 +1,8 @@
+[production:children]
+reprepro
+
+[reprepro]
+repo.example.org
+
+[local]
+localhost ansible_connection=local

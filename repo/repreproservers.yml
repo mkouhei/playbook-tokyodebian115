@@ -1,0 +1,9 @@
+---
+- hosts: reprepro
+  sudo: yes
+  roles:
+    - common
+    - apache
+    - reprepro
+  tags:
+    - reprepro

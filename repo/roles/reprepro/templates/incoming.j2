@@ -1,0 +1,9 @@
+{% for codename in item.codenames %}
+Name: {{ codename }}
+IncomingDir: incoming
+TempDir: tmp
+LogDir: log
+Allow: {{ codename }}
+Default: {{ codename }}
+
+{% endfor %}
