@@ -13,9 +13,15 @@ These playbooks are prepared for the session of Tokyo Debian Meeting #115 (2014.
 * Signing with GPG Public key.
 * Uploading to local archives managed with reprepro.
 
+Requirements
+------------
+
+* Generate a new GNU PGP key pair for reprepro.
+* Generate a new SSH public key pair.
 
 Playbooks
 ---------
 
-"ci" directory is the playbook for deploying Jenkins system.
 "repo" directory is the playbook for deploying reprepro system.
+"ci" directory is the playbook for deploying Jenkins system.
+
