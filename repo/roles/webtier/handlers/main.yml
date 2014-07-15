@@ -1,0 +1,12 @@
+---
+# file: roles/webtier/handlers/main.yml
+
+- name: restart apache2
+  service: name=apache2 state=restarted
+  tags:
+    - apache
+
+- name: reload apache2
+  service: name=apache2 state=reloaded
+  tags:
+    - apache

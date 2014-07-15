@@ -3,7 +3,7 @@
   sudo: yes
   roles:
     - common
-    - apache
+    - webtier
     - reprepro
   tags:
     - reprepro

@@ -1,12 +1,12 @@
 {% for codename in item.codenames %}
-Origin: {{ org_name }}
-Label: {{ org_name }}
+Origin: {{ origin_name }}
+Label: {{ origin_name }}
 Suite: {{ codename }}
 Codename: {{ codename }}
 Architectures: {{ architectures }}
 Components: custom
 UDebComponents: custom
-Description: {{ org_name }} repository for {{ item.distro_name }} {{ codename }}
+Description: {{ origin_name }} repository for {{ item.distro_name }} {{ codename }}
 SignWith: yes
 
 {% endfor %}

@@ -9,8 +9,19 @@
     - reprepro
     - packages
 
+- name: be sure group 'reprepro group' is prepared
+  group: name={{ reprepro_gid }} gid={{ reprepro_gidnumber }} state=present
+  tags:
+    - group
+
+- name: be sure user 'reprepro user' is prepared
+  user: name={{ reprepro_uid }} uid={{ reprepro_uidnumber }} createhome=yes group={{ reprepro_gid }} state=present
+  tags:
+    - user
+
+
 - name: be sure configration directories are prpared
-  file: path=/home/{{ reprepro_user }}/{{ item }} owner={{ reprepro_user }} group={{ reprepro_group }} mode=0700 state=directory
+  file: path=/home/{{ reprepro_uid }}/{{ item }} owner={{ reprepro_uid }} group={{ reprepro_gid }} mode=0700 state=directory
   with_items:
     - .gnupg
     - .ssh
@@ -18,28 +29,26 @@
     - configuration
     - reprepro
 
-- name: be sure configuraton files are prepared
-  template: src={{ item }}.j2 dest=/home/{{ reprepro_user }}/.gnupg/{{ item }} owner={{ reprepro_user }} group={{ reprepro_group }} mode=0600
-  with_items:
-    - gpg.conf
-  tags:
-    - configuration
-    - gnupg
-    - reprepro
+#- name: be sure configuraton file are prepared
+#  template: src={{ item }}.j2 dest=/home/{{ reprepro_uid }}/.gnupg/{{ item }} owner={{ reprepro_uid }} group={{ reprepro_gid }} mode=0600
+#  tags:
+#    - configuration
+#    - gnupg
+#  with_items:
+#    - gpg.conf
 
-#- name: be sure configuraton files are prepared
-#  copy: src={{ item }} dest=/home/{{ reprepro_user }}/.gnupg/{{ item }} owner={{ reprepro_user }} group={{ reprepro_group }} mode=0600
+#- name: be sure keyring files are prepared
+#  copy: src={{ item }} dest=/home/{{ reprepro_uid }}/.gnupg/{{ item }} owner={{ reprepro_uid }} group={{ reprepro_gid }} mode=0600
+#  tags:
+#    - configuration
+#    - gnupg
 #  with_items:
 #    - pubring.gpg
 #    - secring.gpg
 #    - trustdb.gpg
-#  tags:
-#    - configuration
-#    - gnupg
-#    - reprepro
 
 #- name: be sure configuration files are prepared
-#  copy: src={{ item }} dest=/home/{{ reprepro_user }}/.ssh/{{ item }} owner={{ reprepro_user }} group={{ reprepro_group }} mode=0600
+#  copy: src={{ item }} dest=/home/{{ reprepro_uid }}/.ssh/{{ item }} owner={{ reprepro_uid }} group={{ reprepro_gid }} mode=0600
 #  with_items:
 #    - authorized_keys
 #  tags:
@@ -48,13 +57,17 @@
 #    - reprepro
 
 - name: check local archive directory
-  file: path={{ item }} owner={{ reprepro_user }} group={{ reprepro_group }} state=directory mode=0755 recurse=yes
+  file: path={{ item }} owner={{ rerepro_uid }} group={{ reprepro_gid }} state=directory mode=0755 recurse=yes
   with_items:
     - /var/www/ubuntu-custom
     - /var/www/debian-custom
     - /var/lib/debpkg-custom
     - /var/lib/debpkg-custom/debian
+    - /var/lib/debpkg-custom/debian/conf
+    - /var/lib/debpkg-custom/debian/incoming
     - /var/lib/debpkg-custom/ubuntu
+    - /var/lib/debpkg-custom/ubuntu/conf
+    - /var/lib/debpkg-custom/ubuntu/incoming
   tags:
     - reprepro
 
@@ -69,24 +82,8 @@
     - reprepro
     - apache
 
-- name: be sure reprepro conf directory is present
-  file: path=/var/lib/debpkg-custom/{{ item.distro_name }}/conf owner={{ reprepro_user }} group={{ reprepro_group }} state=directory recurse=yes
-  with_items:
-    - { distro_name: "ubuntu", codenames: ["precise", "trusty"] }
-    - { distro_name: "debian", codenames: ["wheezy"] }
-  tags:
-    - reprepro
-
-- name: be sure reprepro incoming directory is present
-  file: path=/var/lib/debpkg-custom/{{ item.distro_name }}/incoming owner={{ reprepro_user }} group={{ reprepro_group }} state=directory recurse=yes
-  with_items:
-    - { distro_name: "ubuntu", codenames: ["precise", "trusty"] }
-    - { distro_name: "debian", codenames: ["wheezy"] }
-  tags:
-    - reprepro
-
 - name: be sure incoming file is present
-  template: src=incoming.j2 dest=/var/lib/debpkg-custom/{{ item.distro_name }}/conf/incoming owner={{ reprepro_user }} group={{ reprepro_group }} mode=0644
+  template: src=incoming.j2 dest=/var/lib/debpkg-custom/{{ item.distro_name }}/conf/incoming owner={{ reprepro_uid }} group={{ reprepro_gid }} mode=0644
   with_items:
     - { distro_name: "ubuntu", codenames: ["precise", "trusty"] }
     - { distro_name: "debian", codenames: ["wheezy"] }
@@ -94,7 +91,7 @@
     - reprepro
 
 - name: be sure distributions file is present
-  template: src=distributions.j2 dest=/var/lib/debpkg-custom/{{ item.distro_name }}/conf/distributions owner={{ reprepro_user }} group={{ reprepro_group }} mode=0644
+  template: src=distributions.j2 dest=/var/lib/debpkg-custom/{{ item.distro_name }}/conf/distributions owner={{ reprepro_uid }} group={{ reprepro_gid }} mode=0644
   with_items:
     - { distro_name: "ubuntu", codenames: ["precise", "trusty"] }
     - { distro_name: "debian", codenames: ["wheezy"] }
@@ -102,18 +99,9 @@
     - reprepro
 
 - name: be sure options file is present
-  template: src=options.j2 dest=/var/lib/debpkg-custom/{{ item.distro_name }}/conf/options owner={{ reprepro_user }} group={{ reprepro_group }} mode=0644
+  template: src=options.j2 dest=/var/lib/debpkg-custom/{{ item }}/conf/options owner={{ rerepro_uid }} group={{ reprepro_gid }} mode=0644
   with_items:
-    - { distro_name: "ubuntu", codenames: ["precise", "trusty"] }
-    - { distro_name: "debian", codenames: ["wheezy"] }
+    - ubuntu
+    - debian
   tags:
     - reprepro
-
-#- name: be sure public key of local archives/custom repositoryies is prepared
-#  copy: src={{ item }} dest=/var/www/ owner=root group=root mode=0644
-#  with_items:
-#    - "{{ reprepro_user }}.pubkey"
-#    - "{{ reprepro_user }}.pubkey.sha512"
-#  tags:
-#    - publickey
-#    - apache
