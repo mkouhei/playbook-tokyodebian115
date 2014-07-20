@@ -18,10 +18,18 @@ Requirements
 
 * Generate a new GNU PGP key pair for reprepro.
 * Generate a new SSH public key pair.
+* Install packages as follows;
+
+  * ansible (>= 1.5)
+  * python-apt
 
 Playbooks
 ---------
 
 "repo" directory is the playbook for deploying reprepro system.
 "ci" directory is the playbook for deploying Jenkins system.
+
+Execute next command under the each directories.::
+
+  $ ansible-playbook -i production site.yaml -K
 
