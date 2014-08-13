@@ -10,25 +10,7 @@
     - piuparts
     - dput
     - debhelper
-    - python-all
-    - python3-all
-    - python-setuptools
-    - python3-setuptools
-    - python-gnupg
-    - python-debian
-    - python-pexpect
-    - ruby-dev
-    - gem2deb
-    - ruby-minitest
-  tags:
-    - packages
-    - debuild
-
-- name: be sure packages installed for Trusty
-  apt: pkg={{ item }} state=latest
-  with_items:
-    - python3-pexpect
-  when: ansible_distribution == 'ubuntu' and ansible_distribution_release == 'trusty'
+    - equiv
   tags:
     - packages
     - debuild
